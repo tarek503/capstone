@@ -13,11 +13,11 @@
 
     <div class="container" id="container">
         <div class="form-container sign-up">
-            <form>
+            <form action="signup.php" method="post" enctype="multipart/form-data">
                 <h1>Create Account</h1>
-                <input type="text" placeholder="Name">
-                <input type="email" placeholder="Email">
-                <input type="password" placeholder="Password">
+                <input type="text" name="name" placeholder="Name" required minlength="3">
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required minlength="6">
                 <span>or sign up with</span>
                 <div class="social-icons">
                     <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
@@ -25,15 +25,15 @@
                     <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
                     <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
                 </div>
-                <button>Sign Up</button>
+                <input class="button" type="submit" value="Sign Up" />
             </form>
             
         </div>
         <div class="form-container sign-in">
-            <form>
-                <h1>Sign In</h1>
-                <input type="email" placeholder="Email">
-                <input type="password" placeholder="Password">
+             <form action="login.php" method="post" enctype="multipart/form-data">
+                    <h1>Sign in</h1>
+                <input type="email" name="email" placeholder="Email">
+                <input type="password" name="password" placeholder="Password">
                 <a href="#">Forgot Your Password?</a>
                 <span>or sign in with</span>
                 <div class="social-icons">
@@ -42,8 +42,8 @@
                     <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
                     <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
                 </div>
-                <button>Sign In</button>
-            </form>
+                <input class="button" type="submit" value="Sign in" />
+             </form>
             
         </div>
         <div class="toggle-container">
