@@ -47,7 +47,7 @@ function addUser($user)
 }
 
 if (addUser($user) == 1) {
-    header("location: signup.html");
+    header("location: index.html");
 }
 
 ?>

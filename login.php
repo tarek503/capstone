@@ -51,7 +51,7 @@ for ($i = 0; $i < sizeof($arr); $i++) {
 if($flag) {
     session_start();
     $_SESSION["username"] = $user->un;
-    header("location: index.html");
+    header("location: mainEng.html");
 }
 else {
     echo '<script> alert("User not found or incorrect password!"); </script>';
