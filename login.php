@@ -1,61 +1,64 @@
 <?php
+// Function to validate and sanitize input
 function VarExist($var)
 {
     if (isset($var) && !empty($var)) {
         return htmlspecialchars($var); 
     } else {
         header("location: index.html");
+        exit();
     }
 }
 
+// Function to connect to the database
 function DBConnect()
 {
     $dbhost = "127.0.0.1";
     $dbname = "fyp";
     $dbuser = "root";
     $dbpass = "";
-    $db = null;
     try {
         $db = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $db;
     } catch (PDOException $e) {
-        print "Error!: " . $e->getMessage() . "<br/>";
-        $db = null;
-        die();
+        die("Error!: " . $e->getMessage());
     }
-    return $db;
 }
 
+// Connect to the database
 $db = DBConnect();
 
-$user = new stdClass();
-$user->pass = VarExist($_POST["password"]);
-$user->email = VarExist($_POST["email"]);
+// Get and sanitize user input
+$email = VarExist($_POST["email"]);
+$password = VarExist($_POST["password"]);
 
+// Query to fetch user information
+$query = "SELECT id, email, password, is_engineer, name FROM users WHERE email = :email AND password = :password";
+$stmt = $db->prepare($query);
+$stmt->bindParam(':email', $email);
+$stmt->bindParam(':password', $password);
+$stmt->execute();
 
+// Fetch user details
+$user = $stmt->fetch(PDO::FETCH_OBJ);
 
-$query = "SELECT id, email, password FROM users";
-$stmt = $db->query($query);
-$arr = array();
-while ($obj = $stmt->fetch(PDO::FETCH_OBJ)) {
-    $arr[] = $obj;
-}
-$flag = false; 
-
-for ($i = 0; $i < sizeof($arr); $i++) {
-    if($user->email===$arr[$i]->email && $arr[$i]->password===$user->pass) {
-        $flag = true;
-        $perm = $arr[$i]->permission;
-        break;
-    }
-}
-if($flag) {
+if ($user) {
     session_start();
-    $_SESSION["username"] = $user->un;
-    header("location: mainEng.html");
-}
-else {
+    if($email == "admin@admin.com") {
+        header("location: admin.html");
+    }
+    else if ($user->is_engineer == 0) { 
+        $_SESSION['engineer_name'] = $user->name;
+        header("location: mainEng.html");
+    } else { // Warehouse manager
+        $_SESSION['manager_name'] = $user->name;
+        header("location: warehousev2.html");
+    }
+    exit();
+} else {
     echo '<script> alert("User not found or incorrect password!"); </script>';
-    echo '<script> window.location.replace("signup.html");</script>';
+    echo '<script> window.location.replace("signup.html"); </script>';
+    exit();
 }
-
 ?>
