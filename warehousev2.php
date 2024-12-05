@@ -1,4 +1,13 @@
 
+<?php
+session_start(); // Start the session to retrieve the logged-in user's data
+
+// Check if the manager is logged in
+if (!isset($_SESSION['manager_name'])) {
+    header("Location: index.html"); // Redirect to the login page if not logged in
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -120,40 +129,121 @@
 
 <!-- Reports start -->
 
-<div id="feature" class="container-xxl py-5">
+<div class="container-xxl py-5">
     <div class="container py-5 px-lg-5">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h5 class="text-primary-gradient fw-medium">Warehouse Info</h5>
-            <h1 class="mb-5">Input Warehouse Information</h1>
+            <h5 class="text-primary-gradient fw-medium">Warehouses Managed By <?php echo $_SESSION['manager_name'] ?></</h5>
+            <h1 class="mb-5">Warehouse Information</h1>
         </div>
-        <form action="saveWarehouseInfo.php" method="POST">
-            <div class="mb-4">
-                <label for="warehouseName" class="form-label">Warehouse Name:</label>
-                <input type="text" id="warehouseName" name="warehouseName" class="form-control" placeholder="Enter Warehouse Name" required>
-            </div>
-            <div class="mb-4">
-                <label for="warehouseLocation" class="form-label">Warehouse Location:</label>
-                <input type="text" id="warehouseLocation" name="warehouseLocation" class="form-control" placeholder="Enter Location" required>
-            </div>
-            <div class="mb-4">
-                <label for="warehouseCapacity" class="form-label">Warehouse Capacity (m²):</label>
-                <input type="text" id="warehouseCapacity" name="warehouseCapacity" class="form-control" placeholder="Enter Warehouse Capacity" required>
-            </div>
-            <div class="mb-4">
-                <label for="warehouseStatus" class="form-label">Status:</label>
-                <select class="form-select" id="warehouseStatus" name="warehouseStatus" required>
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                </select>
-            </div>
-            <div class="mb-4">
-                <label for="lastUpdate" class="form-label">Last Updated:</label>
-                <input type="date" id="lastUpdate" name="lastUpdate" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary-gradient">Save / Update Info</button>
-        </form>
+        <?php
+        // Database connection
+        $servername = "127.0.0.1";  
+        $username = "root"; // Replace with your database username
+        $password = ""; // Replace with your database password
+        $dbname = "fyp"; // Replace with your database name
+
+        $manager_name = $_SESSION['manager_name'];
+
+        // Create connection
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        // Query to fetch warehouses for the manager
+        $sql = "SELECT id,  warehouse_name, location, capacity, status, last_updated 
+                FROM warehouses 
+                WHERE manager_name = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $manager_name);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            echo '<table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Warehouse Name</th>
+                            <th>Location</th>
+                            <th>Capacity</th>   
+                            <th>Status</th>
+                            <th>Last Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+            // Output data of each row
+            while ($row = $result->fetch_assoc()) {
+                echo "<tr>
+                        <td>{$row['warehouse_name']}</td>
+                        <td>{$row['location']}</td>
+                        <td>{$row['capacity']}</td>
+                        <td>{$row['status']}</td>
+                        <td>{$row['last_updated']}</td>
+                        <td>
+                                    <button class='btn btn-primary-gradient py-1.5 px-2.5 rounded-pill mt-1.5' 
+                                            data-id='{$row['id']}'
+                                            data-bs-toggle='modal' 
+                                            data-bs-target='#editWarehouseModal'>
+                                        Edit
+                                    </button>
+                                </td>
+                      </tr>";
+            }
+            echo '</tbody></table>';
+        } else {
+            echo '<p class="text-center">No warehouses found for this manager.</p>';
+        }
+
+        $stmt->close();
+        $conn->close();
+        ?>
     </div>
 </div>
+
+<!-- Edit Warehouse Modal -->
+<div class="modal fade" id="editWarehouseModal" tabindex="-1" aria-labelledby="editWarehouseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editWarehouseForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editWarehouseModalLabel">Edit Warehouse Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="warehouseId" name="warehouse_id">
+                    <div class="mb-3">
+                        <label for="modalWarehouseName" class="form-label">Warehouse Name</label>
+                        <input type="text" id="modalWarehouseName" name="warehouse_name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalLocation" class="form-label">Location</label>
+                        <input type="text" id="modalLocation" name="location" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalCapacity" class="form-label">Capacity</label>
+                        <input type="number" id="modalCapacity" name="capacity" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalStatus" class="form-label">Status</label>
+                        <select id="modalStatus" name="status" class="form-select" required>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary-gradient py-2 px-3 rounded-pill mt-2" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary-gradient py-2 px-3 rounded-pill mt-2">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
         <!-- Reports end -->
 
         
@@ -223,6 +313,52 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+    <script>document.addEventListener("DOMContentLoaded", function () {
+    // Handle Edit Button Click
+    const editButtons = document.querySelectorAll(".edit-button");
+    editButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            const warehouseId = this.getAttribute("data-id");
+
+            // Fetch warehouse data via AJAX
+            fetch(`fetchWarehouse.php?id=${warehouseId}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    // Populate the modal with data
+                    document.getElementById("warehouseId").value = data.id;
+                    document.getElementById("modalWarehouseName").value = data.warehouse_name;
+                    document.getElementById("modalLocation").value = data.location;
+                    document.getElementById("modalCapacity").value = data.capacity;
+                    document.getElementById("modalStatus").value = data.status;
+                })
+                .catch((error) => console.error("Error fetching warehouse data:", error));
+        });
+    });
+
+    // Handle Form Submission
+    document.getElementById("editWarehouseForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const formData = new FormData(this);
+
+        // Send updated data via AJAX
+        fetch("updateWarehouse.php", {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((result) => {
+                if (result.success) {
+                    alert("Warehouse updated successfully!");
+                    location.reload(); // Reload the page to reflect changes
+                } else {
+                    alert("Failed to update warehouse.");
+                }
+            })
+            .catch((error) => console.error("Error updating warehouse:", error));
+    });
+});
+    </script>
 </body>
 
 </html>

@@ -53,12 +53,12 @@ if ($user) {
         header("location: mainEng.html");
     } else { // Warehouse manager
         $_SESSION['manager_name'] = $user->name;
-        header("location: warehousev2.html");
+        header("location: warehousev2.php");
     }
     exit();
 } else {
     echo '<script> alert("User not found or incorrect password!"); </script>';
-    echo '<script> window.location.replace("signup.html"); </script>';
+    echo '<script> window.location.replace("index.html"); </script>';
     exit();
 }
 ?>
