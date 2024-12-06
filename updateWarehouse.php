@@ -26,7 +26,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $warehouse_name = $_POST['warehouse_name'];
     $location = $_POST['location'];
     $capacity = $_POST['capacity'];
-    $status = $_POST['status'];
+    $status = $_POST['status']; 
+
+    
 
     // Update warehouse data
     $query = "UPDATE warehouses 

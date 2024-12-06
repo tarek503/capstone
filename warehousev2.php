@@ -125,6 +125,7 @@ if (!isset($_SESSION['manager_name'])) {
                 <img class="img-fluid wow fadeInUp" data-wow-delay="0.5s" src="img\safety_tips.jpg" style="max-width: 70%; height: auto;">
             </div>
         </div>
+    </div>
 </div>
 
 <!-- Reports start -->
@@ -183,7 +184,7 @@ if (!isset($_SESSION['manager_name'])) {
                         <td>{$row['status']}</td>
                         <td>{$row['last_updated']}</td>
                         <td>
-                                    <button class='btn btn-primary-gradient py-1.5 px-2.5 rounded-pill mt-1.5' 
+                                    <button class='btn btn-primary-gradient py-1.5 px-2.5 rounded-pill mt-1.5 edit-button'
                                             data-id='{$row['id']}'
                                             data-bs-toggle='modal' 
                                             data-bs-target='#editWarehouseModal'>
@@ -242,12 +243,8 @@ if (!isset($_SESSION['manager_name'])) {
         </div>
     </div>
 </div>
-
-
         <!-- Reports end -->
-
-        
-
+         
         <!-- Footer Start -->
         <div class="container-fluid bg-primary text-light footer wow fadeIn" data-wow-delay="0.1s">
             <div class="container py-5 px-lg-5">
@@ -313,28 +310,24 @@ if (!isset($_SESSION['manager_name'])) {
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
-    <script>document.addEventListener("DOMContentLoaded", function () {
-    // Handle Edit Button Click
-    const editButtons = document.querySelectorAll(".edit-button");
-    editButtons.forEach((button) => {
-        button.addEventListener("click", function () {
-            const warehouseId = this.getAttribute("data-id");
-
-            // Fetch warehouse data via AJAX
-            fetch(`fetchWarehouse.php?id=${warehouseId}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    // Populate the modal with data
-                    document.getElementById("warehouseId").value = data.id;
-                    document.getElementById("modalWarehouseName").value = data.warehouse_name;
-                    document.getElementById("modalLocation").value = data.location;
-                    document.getElementById("modalCapacity").value = data.capacity;
-                    document.getElementById("modalStatus").value = data.status;
-                })
-                .catch((error) => console.error("Error fetching warehouse data:", error));
-        });
-    });
-
+    <script>
+     document.addEventListener("DOMContentLoaded", function () {
+                const editButtons = document.querySelectorAll(".edit-button");
+                editButtons.forEach(button => {
+                    button.addEventListener("click", function () {
+                        const id = this.dataset.id;
+                        fetch(`fetchWarehouse.php?id=${id}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                document.getElementById("warehouseId").value = data.id;
+                                document.getElementById("modalWarehouseName").value = data.warehouse_name;
+                                document.getElementById("modalLocation").value = data.location;
+                                document.getElementById("modalCapacity").value = data.capacity;
+                                document.getElementById("modalStatus").value = data.status;
+                            })
+                            .catch(error => console.error("Error fetching warehouse data:", error));
+                    });
+                });
     // Handle Form Submission
     document.getElementById("editWarehouseForm").addEventListener("submit", function (event) {
         event.preventDefault(); // Prevent default form submission
