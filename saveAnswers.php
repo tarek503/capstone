@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate that all answers match database columns
     $columns = array_keys($answers);
     $placeholders = array_map(fn($col) => ":$col", $columns);
+    
 
     // Construct the SQL query
     $query = "INSERT INTO reports (WarehouseName, EngineerUsername, ReportDate, " . implode(", ", $columns) . ")

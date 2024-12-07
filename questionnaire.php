@@ -253,7 +253,6 @@ $questions = $statement->fetchAll(PDO::FETCH_ASSOC);
             followUps.forEach(el => el.style.display = show ? 'block' : 'none');
         }
     </script>
-
 <script>
     document.querySelector('form').addEventListener('submit', async function (e) {
         e.preventDefault(); // Prevent default form submission
@@ -272,20 +271,46 @@ $questions = $statement->fetchAll(PDO::FETCH_ASSOC);
                 // Show success alert
                 alert('Data has been saved successfully!');
 
-                // Check if the "Download Report" button already exists
-                if (!document.querySelector('#downloadReportButton')) {
-                    // Create the "Download Report" button dynamically
-                    const downloadButton = document.createElement('button');
-                    downloadButton.id = 'downloadReportButton';
-                    downloadButton.className = 'btn btn-primary-gradient rounded-pill py-2 px-4 ms-3';
-                    downloadButton.textContent = 'Download Report';
-                    
-                    // Append the button next to the "Submit" button
-                    this.appendChild(downloadButton);
+                // Locate the "Submit" button
+                const submitButton = this.querySelector('button[type="submit"]');
 
-                    // Add event listener to the new button for report download
-                    downloadButton.addEventListener('click', function () {
-                        window.location.href = 'generateReport.php'; // Replace with the actual file download logic
+                // Check if the "Generate Report" button already exists
+                if (!document.querySelector('#generateReportButton')) {
+                    // Create the "Generate Report" button dynamically
+                    const generateButton = document.createElement('button');
+                    generateButton.id = 'generateReportButton';
+                    generateButton.className = 'btn btn-primary-gradient rounded-pill py-2 px-4 ms-3';
+                    generateButton.textContent = 'Generate Report';
+
+                    // Append the "Generate Report" button next to the "Submit" button
+                    submitButton.insertAdjacentElement('afterend', generateButton);
+
+                    // Add event listener to the new button for report generation
+                    generateButton.addEventListener('click', async function (e) {
+                        e.preventDefault(); // Prevent default form submission when clicking "Generate Report"
+
+                        try {
+                            const reportResponse = await fetch('generateReport.php', {
+                                method: 'POST',
+                            });
+
+                            if (!reportResponse.ok) {
+                                throw new Error('Failed to generate the report.');
+                            }
+
+                            // Convert the response to a blob and trigger the download
+                            const blob = await reportResponse.blob();
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.style.display = 'none';
+                            a.href = url;
+                            a.download = 'Safety_Report.pdf'; // Set the file name
+                            document.body.appendChild(a);
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                        } catch (error) {
+                            alert('Error generating report: ' + error.message);
+                        }
                     });
                 }
             } else {
@@ -297,7 +322,6 @@ $questions = $statement->fetchAll(PDO::FETCH_ASSOC);
         }
     });
 </script>
-
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
