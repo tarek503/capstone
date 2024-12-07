@@ -204,6 +204,8 @@ if (!isset($_SESSION['manager_name'])) {
     </div>
 </div>
 
+
+
 <!-- Edit Warehouse Modal -->
 <div class="modal fade" id="editWarehouseModal" tabindex="-1" aria-labelledby="editWarehouseModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -334,7 +336,6 @@ if (!isset($_SESSION['manager_name'])) {
 
         const formData = new FormData(this);
 
-        // Send updated data via AJAX
         fetch("updateWarehouse.php", {
             method: "POST",
             body: formData,
