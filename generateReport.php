@@ -74,7 +74,7 @@ foreach ($questions as $q) {
 }
 
 // Call the Python API
-$apiUrl = "http://127.0.0.1:5000/ask-gpt"; // Ensure your Python API is running
+$apiUrl = "http://127.0.0.1:5000/ask-gpt"; 
 $data = json_encode(["prompt" => "Write a very detailed safety report, including risk analysis according to the following questionnaire, write it as one connected paragraph with professional english:\n" . $reportString]);
 
 $ch = curl_init($apiUrl);
@@ -118,12 +118,13 @@ $pdf = new PDF();
 $pdf->AddPage();
 $pdf->SetFont('Arial', '', 12);
 $pdf->MultiCell(0, 10, $generatedReport);
-$pdfFile = "Safety_Report_" . time() . ".pdf";
+$pdfFile = "Safety_Report_" . date('Ymd_His') . ".pdf"; // Generates a filename with date and time
 $pdf->Output($pdfFile, 'F');
 
 // Return the PDF as a downloadable file
 header('Content-Type: application/pdf');
 header('Content-Disposition: attachment; filename="' . $pdfFile . '"');
+error_log("Generated File Name: $pdfFile");
 readfile($pdfFile);
 
 // Delete the temporary PDF file
