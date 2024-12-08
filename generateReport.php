@@ -124,7 +124,7 @@ $pdf->Output($pdfFile, 'F');
 // Return the PDF as a downloadable file
 header('Content-Type: application/pdf');
 header('Content-Disposition: attachment; filename="' . $pdfFile . '"');
-error_log("Generated File Name: $pdfFile");
+header('Content-Length: ' . filesize($pdfFile));
 readfile($pdfFile);
 
 // Delete the temporary PDF file

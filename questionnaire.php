@@ -101,7 +101,7 @@ $questions = $statement->fetchAll(PDO::FETCH_ASSOC);
                         <div class="col-lg-8 text-center text-lg-start">
                             <h1 class="text-white mb-4 animated slideInDown">Building Your Safety Report From Scratch</h1>
                             <p class="text-white pb-3 animated slideInDown">Welcome to SERG, your trusted solution for creating and managing safety engineering reports. Streamline hazard assessments, risk analyses, and compliance audits with ease and precision.</p>
-                            <a href="#feature" class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill me-3 animated slideInLeft">Proceed to Generate a Report</a>
+                            <a href="#feature" class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill me-3 animated slideInLeft">Proceed to the questionnaire</a>
                         </div>
                         <div class="col-lg-4 d-flex justify-content-center justify-content-lg-end wow fadeInUp" data-wow-delay="0.3s">
                             <div class="owl-carousel screenshot-carousel">
@@ -254,73 +254,81 @@ $questions = $statement->fetchAll(PDO::FETCH_ASSOC);
         }
     </script>
 <script>
-    document.querySelector('form').addEventListener('submit', async function (e) {
-        e.preventDefault(); // Prevent default form submission
+   document.querySelector('form').addEventListener('submit', async function (e) {
+    e.preventDefault(); // Prevent default form submission
 
-        // Get the form data
-        const formData = new FormData(this);
+    // Get the form data
+    const formData = new FormData(this);
 
-        try {
-            // Send the form data using fetch
-            const response = await fetch('saveAnswers.php', {
-                method: 'POST',
-                body: formData,
-            });
+    try {
+        // Send the form data using fetch
+        const response = await fetch('saveAnswers.php', {
+            method: 'POST',
+            body: formData,
+        });
 
-            if (response.ok) {
-                // Show success alert
-                alert('Data has been saved successfully!');
+        if (response.ok) {
+            // Show success alert
+            alert('Data has been saved successfully!');
 
-                // Locate the "Submit" button
-                const submitButton = this.querySelector('button[type="submit"]');
+            // Locate the "Submit" button
+            const submitButton = this.querySelector('button[type="submit"]');
 
-                // Check if the "Generate Report" button already exists
-                if (!document.querySelector('#generateReportButton')) {
-                    // Create the "Generate Report" button dynamically
-                    const generateButton = document.createElement('button');
-                    generateButton.id = 'generateReportButton';
-                    generateButton.className = 'btn btn-primary-gradient rounded-pill py-2 px-4 ms-3';
-                    generateButton.textContent = 'Generate Report';
+            // Check if the "Generate Report" button already exists
+            if (!document.querySelector('#generateReportButton')) {
+                // Create the "Generate Report" button dynamically
+                const generateButton = document.createElement('button');
+                generateButton.id = 'generateReportButton';
+                generateButton.className = 'btn btn-primary-gradient rounded-pill py-2 px-4 ms-3';
+                generateButton.textContent = 'Generate Report';
 
-                    // Append the "Generate Report" button next to the "Submit" button
-                    submitButton.insertAdjacentElement('afterend', generateButton);
+                // Append the "Generate Report" button next to the "Submit" button
+                submitButton.insertAdjacentElement('afterend', generateButton);
 
-                    // Add event listener to the new button for report generation
-                    generateButton.addEventListener('click', async function (e) {
-                        e.preventDefault(); // Prevent default form submission when clicking "Generate Report"
+                // Add event listener to the new button for report generation
+                generateButton.addEventListener('click', async function (e) {
+                    e.preventDefault(); // Prevent default form submission when clicking "Generate Report"
 
-                        try {
-                            const reportResponse = await fetch('generateReport.php', {
-                                method: 'POST',
-                            });
+                    try {
+                        const reportResponse = await fetch('generateReport.php', {
+                            method: 'POST',
+                        });
 
-                            if (!reportResponse.ok) {
-                                throw new Error('Failed to generate the report.');
-                            }
-
-                            // Convert the response to a blob and trigger the download
-                            const blob = await reportResponse.blob();
-                            const url = window.URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.style.display = 'none';
-                            a.href = url;
-                            a.download = 'Safety_Report.pdf'; // Set the file name
-                            document.body.appendChild(a);
-                            a.click();
-                            window.URL.revokeObjectURL(url);
-                        } catch (error) {
-                            alert('Error generating report: ' + error.message);
+                        if (!reportResponse.ok) {
+                            throw new Error('Failed to generate the report.');
                         }
-                    });
-                }
-            } else {
-                alert('An error occurred while saving the data.');
+
+                        // Parse Content-Disposition header to extract the filename
+                        const contentDisposition = reportResponse.headers.get('Content-Disposition');
+                        let filename = 'Safety_Report.pdf'; // Default filename
+                        if (contentDisposition && contentDisposition.includes('filename=')) {
+                            filename = contentDisposition.split('filename=')[1].replace(/"/g, '');
+                        }
+
+                        // Convert the response to a blob and trigger the download
+                        const blob = await reportResponse.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = filename; // Use the extracted filename
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    } catch (error) {
+                        alert('Error generating report: ' + error.message);
+                    }
+                });
             }
-        } catch (error) {
-            console.error('Error:', error);
+        } else {
             alert('An error occurred while saving the data.');
         }
-    });
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while saving the data.');
+    }
+});
+
 </script>
 
     <!-- JavaScript Libraries -->
