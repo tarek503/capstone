@@ -133,6 +133,23 @@ if (!isset($_SESSION['manager_name'])) {
 <div class="container-xxl py-5">
     <div class="container py-5 px-lg-5">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h5 class="text-primary-gradient fw-medium">Add a warehouse as <?php echo $_SESSION['manager_name'] ?></</h5>
+            <h1 class="mb-5">Create a new warehouse with the according information</h1>
+        </div>
+         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+         <button class='btn btn-primary-gradient py-3 px-4 squared-pill mt-3'
+                    data-bs-toggle='modal' 
+                    data-bs-target='#addWarehouseModal'>
+                    ADD NEW WAREHOUSE
+                </button>
+                    </div>;
+    </div>
+</div>
+
+
+<div class="container-xxl py-5">
+    <div class="container py-5 px-lg-5">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
             <h5 class="text-primary-gradient fw-medium">Warehouses Managed By <?php echo $_SESSION['manager_name'] ?></</h5>
             <h1 class="mb-5">Warehouse Information</h1>
         </div>
@@ -190,6 +207,12 @@ if (!isset($_SESSION['manager_name'])) {
                                             data-bs-target='#editWarehouseModal'>
                                         Edit
                                     </button>
+                                   <button 
+                                <button 
+                                        class='btn btn-primary-gradient py-1.5 px-2.5 rounded-pill mt-1.5 delete-button' 
+                                        data-id='{$row['id']}'>
+                                        Delete
+                                    </button>
                                 </td>
                       </tr>";
             }
@@ -245,6 +268,45 @@ if (!isset($_SESSION['manager_name'])) {
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="addWarehouseModal" tabindex="-1" aria-labelledby="addWarehouseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="addWarehouseForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addWarehouseModalLabel">Add Warehouse Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="warehouseName" class="form-label">Warehouse Name</label>
+                        <input type="text" id="warehouseName" name="warehouseName" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="warehouseLocation" class="form-label">Location</label>
+                        <input type="text" id="warehouseLocation" name="warehouseLocation" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="warehouseCapacity" class="form-label">Capacity</label>
+                        <input type="number" id="warehouseCapacity" name="warehouseCapacity" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="warehouseStatus" class="form-label">Status</label>
+                        <select id="warehouseStatus" name="warehouseStatus" class="form-select" required>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary-gradient py-2 px-3 rounded-pill mt-2" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary-gradient py-2 px-3 rounded-pill mt-2">Save Warehouse</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
         <!-- Reports end -->
          
         <!-- Footer Start -->
@@ -313,6 +375,29 @@ if (!isset($_SESSION['manager_name'])) {
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
     <script>
+    document.getElementById("addWarehouseForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const formData = new FormData(this);
+
+        fetch("saveWarehouseInfo.php", {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((result) => {
+                if (result.success) {
+                    alert("Warehouse added successfully!");
+                    location.reload(); // Reload the page to reflect changes
+                } else {
+                    alert("Failed to save warehouse.");
+                }
+            })
+            .catch((error) => console.error("Error saving warehouse:", error));
+    });
+    </script>
+
+<script>
      document.addEventListener("DOMContentLoaded", function () {
                 const editButtons = document.querySelectorAll(".edit-button");
                 editButtons.forEach(button => {
@@ -353,6 +438,41 @@ if (!isset($_SESSION['manager_name'])) {
     });
 });
     </script>
+
+
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Add event listener to delete buttons
+    const deleteButtons = document.querySelectorAll(".delete-button");
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            const warehouseId = this.getAttribute("data-id"); // Get warehouse ID
+
+            if (confirm("Are you sure you want to delete this warehouse?")) {
+                // Send AJAX request to deleteWarehouse.php
+                fetch("deleteWarehouse.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: `id=${warehouseId}`,
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            alert("Warehouse deleted successfully!");
+                            location.reload(); // Reload the page to reflect changes
+                        } else {
+                            alert("Failed to delete warehouse: " + result.message);
+                        }
+                    })
+                    .catch(error => console.error("Error deleting warehouse:", error));
+            }
+        });
+    });
+});
+</script>
+
 </body>
 
 </html>

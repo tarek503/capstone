@@ -343,5 +343,4 @@ $questions = $statement->fetchAll(PDO::FETCH_ASSOC);
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 </body>
-
 </html>
