@@ -1,4 +1,13 @@
 
+<?php
+session_start(); // Start the session to retrieve the logged-in user's data
+
+// Check if the manager is logged in
+if (!isset($_SESSION['engineer_name'])) {
+    header("Location: index.html"); // Redirect to the login page if not logged in
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -46,7 +55,7 @@
         <!-- Navbar & Hero Start -->
         <div class="container-xxl position-relative p-0" id="home">
             <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-                <a href="" class="navbar-brand p-0">
+                <a href="mainEng.php" class="navbar-brand p-0">
                     <h1 class="m-0">SERG</h1>
                 </a>    
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -55,8 +64,7 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav mx-auto py-0">
                         <a href="#home" class="nav-item nav-link active">Home</a>
-                        <a href="#about" class="nav-item nav-link">About</a>
-                        <a href="#feature" class="nav-item nav-link">Reports</a>
+                        <a href="#feature" class="nav-item nav-link">Old Reports</a>
                     </div>
                     <a href="index.html" class="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block">Log Out</a>
                 </div>
@@ -66,9 +74,9 @@
                 <div class="container px-lg-5">
                     <div class="row g-5">
                         <div class="col-lg-8 text-center text-lg-start">
-                            <h1 class="text-white mb-4 animated slideInDown">Building Your Safety Report From Scratch</h1>
-                            <p class="text-white pb-3 animated slideInDown">Welcome to SERG, your trusted solution for creating and managing safety engineering reports. Streamline hazard assessments, risk analyses, and compliance audits with ease and precision.</p>
-                            <a href="#feature" class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill me-3 animated slideInLeft">Proceed to Generate a Report</a>
+                            <h1 class="text-white mb-4 animated slideInDown">Managing Your Warehouse Information</h1>
+                            <p class="text-white pb-3 animated slideInDown">Manage warehouse data and assist engineers in generating safety reports for your warehouse.</p>
+                            <a href="#feature" class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill me-3 animated slideInLeft">Proceed to Manage Your Info</a>
                         </div>
                         <div class="col-lg-4 d-flex justify-content-center justify-content-lg-end wow fadeInUp" data-wow-delay="0.3s">
                             <div class="owl-carousel screenshot-carousel">
@@ -82,80 +90,78 @@
         </div>
         <!-- Navbar & Hero End -->
 
-        <!-- About Start -->
-<div class="container-xxl py-5" id="about">
-    <div class="container py-5 px-lg-5">
-        <div class="row g-5 align-items-center">
-            <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
-                <h5 class="text-primary-gradient fw-medium">About Us</h5>
-                <h1 class="mb-4">#1 Platform For Achieving Warehouse Safety</h1>
-                <p class="mb-4">At SERG, we understand the importance of maintaining safety and compliance in engineering projects. Our platform is designed to empower professionals with seamless tools to create, manage, and access safety engineering reports. Whether you're conducting hazard assessments, risk analyses, or compliance audits, SERG simplifies the process, ensuring accuracy and efficiency every step of the way.
-
-                    With an intuitive interface and robust features, SERG helps you stay organized, save time, and focus on what matters most—enhancing safety and minimizing risks. Explore our easy-to-use platform and experience the future of safety engineering reporting today!</p>
-                <div class="row g-4 mb-4">
-                    <div class="col-sm-6 wow fadeIn" data-wow-delay="0.5s">
-                        <div class="d-flex">
-                            <i class="fa fa-cogs fa-2x text-primary-gradient flex-shrink-0 mt-1"></i>
-                            <div class="ms-3">
-                                <h2 class="mb-0" data-toggle="counter-up">1000000</h2>
-                                <p class="text-primary-gradient mb-0">Active Clients</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 wow fadeIn" data-wow-delay="0.7s">
-                        <div class="d-flex">
-                            <i class="fa fa-comments fa-2x text-secondary-gradient flex-shrink-0 mt-1"></i>
-                            <div class="ms-3">
-                                <h2 class="mb-0" data-toggle="counter-up">100000</h2>
-                                <p class="text-secondary-gradient mb-0">Clients Reviews</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <a href="" class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill mt-3">Read More</a>
-            </div>
-            <div class="col-lg-6 text-center">
-                <img class="img-fluid wow fadeInUp" data-wow-delay="0.5s" src="img\safety_tips.jpg" style="max-width: 70%; height: auto;">
-            </div>
-        </div>
-</div>
 
 <!-- Reports start -->
 
-        <div class="container-xxl py-5" id="feature">
+<div class="container-xxl py-5" id="feature">
             <div class="container py-5 px-lg-5">
                 <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                    <h5 class="text-primary-gradient fw-medium">Reports</h5>
-                    <h1 class="mb-5">Explore Functionalities</h1>
+                    <h5 class="text-primary-gradient fw-medium">View Old Reports By <?php echo $_SESSION['engineer_name'] ?></h5>
+                    <h1 class="mb-5">Warehouse Information</h1>
                 </div>
-                <div class="row g-4">
-                    <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                        <div class="feature-item bg-light rounded p-4">
-                            <div class="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle mb-4" style="width: 60px; height: 60px;">
-                                <i class="fa fa-edit text-white fs-4"></i>
-                            </div>
-                            <h5 class="mb-3">Create New Report</h5>
-                            <p class="m-0">Quickly generate comprehensive safety engineering reports with ease and precision.</p>
-                            <a href="requestPage.php" class="btn btn-primary-gradient mt-3">Create New Report</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                        <div class="feature-item bg-light rounded p-4">
-                            <div class="d-inline-flex align-items-center justify-content-center bg-secondary-gradient rounded-circle mb-4" style="width: 60px; height: 60px;">
-                                <i class="fa fa-folder-open text-white fs-4"></i>
-                            </div>
-                            <h5 class="mb-3">View Old Reports</h5>
-                            <p class="m-0">Access and manage previously generated reports at any time, from anywhere.</p>
-                            <a href="#" class="btn btn-secondary-gradient mt-3">View Old Reports</a>
-                        </div>
-                    </div>
-                </div>
+                <?php
+                // Database connection
+                $servername = "127.0.0.1";  
+                $username = "root"; // Replace with your database username
+                $password = ""; // Replace with your database password
+                $dbname = "fyp"; // Replace with your database name
+
+                $engineer_name = $_SESSION['engineer_name'];
+
+                // Create connection
+                $conn = new mysqli($servername, $username, $password, $dbname);
+
+                // Check connection
+                if ($conn->connect_error) {
+                    die("Connection failed: " . $conn->connect_error);
+                }
+
+                // Query to fetch reports for the engineer
+                $sql = "SELECT EngineerUsername, WarehouseName, pdf_file FROM reports WHERE EngineerUsername = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("s", $engineer_name);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                        if ($result->num_rows > 0) {
+                            echo '<table class="table table-bordered text-center">';
+                            echo '<thead>';
+                            echo '<tr>';
+                            echo '<th>Engineer Name</th>';
+                            echo '<th>Warehouse Name</th>';
+                            echo '<th>Report</th>';
+                            echo '</tr>';
+                            echo '</thead>';
+                            echo '<tbody>';
+                            while ($row = $result->fetch_assoc()) {
+                                echo '<tr>';
+                                echo '<td>' . htmlspecialchars($row['EngineerUsername']) . '</td>';
+                                echo '<td>' . htmlspecialchars($row['WarehouseName']) . '</td>';
+                                echo '<td>';
+                                if (!empty($row['pdf_file'])) {
+                                    $fileName = "Safety_Report_" . uniqid() . ".pdf"; 
+                                    file_put_contents($fileName, $row['pdf_file']);
+                                    echo '<a href="' . $fileName . '" target="_blank" class="btn btn-primary-gradient py-2 px-4 rounded-pill">View</a> ';
+                                    echo '<a href="' . $fileName . '" download class="btn btn-secondary-gradient py-2 px-4 rounded-pill">Download</a>';
+                                } else {
+                                    echo '<span class="text-muted">No PDF available</span>';
+                                }
+                                echo '</td>';
+                                echo '</tr>';
+                            }
+                            echo '</tbody>';
+                            echo '</table>';
+                        } else {
+                            echo '<p class="text-center">No reports found.</p>';
+                        }
+
+                $stmt->close();
+                $conn->close();
+                ?>
             </div>
         </div>
         <!-- Reports end -->
-
-        
-
+         
         <!-- Footer Start -->
         <div class="container-fluid bg-primary text-light footer wow fadeIn" data-wow-delay="0.1s">
             <div class="container py-5 px-lg-5">
@@ -200,6 +206,7 @@
                     </div>
                 </div>
             </div>
+        
         </div>
         <!-- Footer End -->
 
@@ -211,6 +218,7 @@
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script src="lib/wow/wow.min.js"></script>
     <script src="lib/easing/easing.min.js"></script>
     <script src="lib/waypoints/waypoints.min.js"></script>
@@ -219,6 +227,7 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+
 </body>
 
 </html>

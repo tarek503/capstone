@@ -1,5 +1,6 @@
 <?php
-// Function to validate and sanitize input
+session_start();
+
 function VarExist($var)
 {
     if (isset($var) && !empty($var)) {
@@ -50,7 +51,7 @@ if ($user) {
     }
     else if ($user->is_engineer == 0) { 
         $_SESSION['engineer_name'] = $user->name;
-        header("location: mainEng.html");
+        header("location: mainEng.php");
     } else { // Warehouse manager
         $_SESSION['manager_name'] = $user->name;
         header("location: warehousev2.php");

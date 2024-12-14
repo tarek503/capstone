@@ -1,4 +1,9 @@
 <?php
+session_start();
+if(!isset($_SESSION['engineer_name'])) {
+    header('index.html');
+    exit();
+}
 // Database connection
 $host = "127.0.0.1";  // Database host
 $dbname = "fyp";  // Database name
@@ -14,18 +19,43 @@ try {
 }
 
 // Assume a logged-in username (replace this with session-based logic)
-$loggedInUsername = "trkhmz503";
+$loggedInEngineer = $_SESSION['engineer_name'];
+
 
 // Fetch the engineer username
-$query = "SELECT username FROM users WHERE username = :username";
+$query = "SELECT name FROM users WHERE name = :username";
 $statement = $conn->prepare($query);
-$statement->execute(['username' => $loggedInUsername]);
+$statement->execute(['username' => $loggedInEngineer]);
 $user = $statement->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
     echo "User not found.";
     exit();
 }
+
+$warehouseID = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['warehouseID']) || empty($_POST['warehouseID'])) {
+        die("Invalid warehouse ID.");
+    }
+
+    $warehouseID = htmlspecialchars($_POST['warehouseID']);
+} else {
+    die("Invalid request method.");
+}
+
+$query = "SELECT warehouse_name FROM warehouses WHERE id = :warehouseID";
+$statement = $conn->prepare($query);
+$statement->execute([':warehouseID' => $warehouseID]);
+$warehouse = $statement->fetch(PDO::FETCH_ASSOC);
+
+if (!$warehouse) {
+    echo "Warehouse not found.";
+    exit();
+}
+
+$warehouseName = $warehouse['warehouse_name'];
 
 // Fetch questions
 $query = "SELECT * FROM Q ORDER BY Section";
@@ -80,7 +110,7 @@ $questions = $statement->fetchAll(PDO::FETCH_ASSOC);
         <!-- Navbar & Hero Start -->
         <div class="container-xxl position-relative p-0" id="home">
             <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-                <a href="" class="navbar-brand p-0">
+                <a href="mainEng.php" class="navbar-brand p-0">
                     <h1 class="m-0">SERG</h1>
                 </a>    
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -125,11 +155,8 @@ $questions = $statement->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <div class="container py-5">
             <form method="POST" action="saveAnswers.php">
-                <div class="mb-4">
-                    <label for="warehouseName" class="form-label">Warehouse Name:</label>
-                    <input type="text" id="warehouseName" name="warehouseName" class="form-control" required>
-                </div>
-
+                    <input type="hidden" id="warehouseName" name="warehouseName" value="<?= htmlspecialchars($warehouseName) ?>">
+            
                 <?php foreach ($questions as $q): 
                     $sectionClass = str_replace(' ', '', htmlspecialchars($q['Section'])); ?>
                     <div class="mb-5">
@@ -186,7 +213,7 @@ $questions = $statement->fetchAll(PDO::FETCH_ASSOC);
                         </div>
                     </div>
                 <?php endforeach; ?>
-                <input type="hidden" name="username" value="<?= htmlspecialchars($user['username']) ?>">
+                <input type="hidden" name="username" value="<?= htmlspecialchars($loggedInEngineer) ?>">
                 <button type="submit" class="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3">Submit</button>
             </form>
         </div>

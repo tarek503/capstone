@@ -1,47 +1,15 @@
+
 <?php
 session_start();
-if (!isset($_SESSION['engineer_name'])) {
-    die("Engineer not logged in. Please log in first.");
-}
-
-// Database connection details
-$host = "127.0.0.1";
-$dbname = "fyp"; 
-$user = "root"; 
-$pass = ""; 
-
-try {
-    // Establish database connection
-    $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo "Connection failed: " . $e->getMessage();
+if(!isset($_SESSION['engineer_name'])) {
+    header('index.html');
     exit();
 }
 
-// Fetch warehouse managers and warehouse names
-$query = "SELECT 
-                warehouses.id AS warehouseID, 
-                warehouses.manager_name, 
-                warehouses.warehouse_name, 
-                COALESCE(requests.reqStatus, 0) AS reqStatus
-          FROM warehouses
-          LEFT JOIN requests 
-          ON warehouses.id = requests.warehouseID
-          AND requests.engineer_name = :engineer_name";
-
-// Prepare and execute the query
-$statement = $conn->prepare($query);
-$statement->execute(['engineer_name' => $_SESSION['engineer_name']]);
-
-// Fetch all results
-$rows = $statement->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>SERG</title>
@@ -71,6 +39,7 @@ $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 </head>
+
 <body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="51">
     <div class="container-xxl bg-white p-0">
         <!-- Spinner Start -->
@@ -81,10 +50,11 @@ $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
         </div>
         <!-- Spinner End -->
 
+
         <!-- Navbar & Hero Start -->
         <div class="container-xxl position-relative p-0" id="home">
             <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-                <a href="mainEng.php" class="navbar-brand p-0">
+                <a href="" class="navbar-brand p-0">
                     <h1 class="m-0">SERG</h1>
                 </a>    
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -93,7 +63,8 @@ $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav mx-auto py-0">
                         <a href="#home" class="nav-item nav-link active">Home</a>
-                        <a href="#requests" class="nav-item nav-link">Requests</a>
+                        <a href="#about" class="nav-item nav-link">About</a>
+                        <a href="#feature" class="nav-item nav-link">Reports</a>
                     </div>
                     <a href="index.html" class="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block">Log Out</a>
                 </div>
@@ -103,14 +74,14 @@ $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
                 <div class="container px-lg-5">
                     <div class="row g-5">
                         <div class="col-lg-8 text-center text-lg-start">
-                            <h1 class="text-white mb-4 animated slideInDown">Request Approval for Warehouses</h1>
-                            <p class="text-white pb-3 animated slideInDown">Streamline your approval process and manage your warehouses efficiently.</p>
-                            <a href="#requests" class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill me-3 animated slideInLeft">View Requests</a>
+                            <h1 class="text-white mb-4 animated slideInDown">Building Your Safety Report From Scratch</h1>
+                            <p class="text-white pb-3 animated slideInDown">Welcome to SERG, your trusted solution for creating and managing safety engineering reports. Streamline hazard assessments, risk analyses, and compliance audits with ease and precision.</p>
+                            <a href="#feature" class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill me-3 animated slideInLeft">Proceed to Generate a Report</a>
                         </div>
                         <div class="col-lg-4 d-flex justify-content-center justify-content-lg-end wow fadeInUp" data-wow-delay="0.3s">
                             <div class="owl-carousel screenshot-carousel">
-                                <img class="img-fluid" src="img/shelf-warehouse-perspective-box.jpg" alt="">
-                                <img class="img-fluid" src="img/warehouse-efficiency-boxes-arranged.avif" alt="">
+                                <img class="img-fluid" src="img\shelf-warehouse-perspective-box.jpg" alt="">
+                                <img class="img-fluid" src="img\warehouse-efficiency-boxes-arranged.avif" alt="">
                             </div>
                         </div>
                     </div>
@@ -119,69 +90,80 @@ $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
         </div>
         <!-- Navbar & Hero End -->
 
-        <!-- Requests Section -->
+        <!-- About Start -->
+<div class="container-xxl py-5" id="about">
+    <div class="container py-5 px-lg-5">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
+                <h5 class="text-primary-gradient fw-medium">About Us</h5>
+                <h1 class="mb-4">#1 Platform For Achieving Warehouse Safety</h1>
+                <p class="mb-4">At SERG, we understand the importance of maintaining safety and compliance in engineering projects. Our platform is designed to empower professionals with seamless tools to create, manage, and access safety engineering reports. Whether you're conducting hazard assessments, risk analyses, or compliance audits, SERG simplifies the process, ensuring accuracy and efficiency every step of the way.
+
+                    With an intuitive interface and robust features, SERG helps you stay organized, save time, and focus on what matters most—enhancing safety and minimizing risks. Explore our easy-to-use platform and experience the future of safety engineering reporting today!</p>
+                <div class="row g-4 mb-4">
+                    <div class="col-sm-6 wow fadeIn" data-wow-delay="0.5s">
+                        <div class="d-flex">
+                            <i class="fa fa-cogs fa-2x text-primary-gradient flex-shrink-0 mt-1"></i>
+                            <div class="ms-3">
+                                <h2 class="mb-0" data-toggle="counter-up">1000000</h2>
+                                <p class="text-primary-gradient mb-0">Active Clients</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 wow fadeIn" data-wow-delay="0.7s">
+                        <div class="d-flex">
+                            <i class="fa fa-comments fa-2x text-secondary-gradient flex-shrink-0 mt-1"></i>
+                            <div class="ms-3">
+                                <h2 class="mb-0" data-toggle="counter-up">100000</h2>
+                                <p class="text-secondary-gradient mb-0">Clients Reviews</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="" class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill mt-3">Read More</a>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img class="img-fluid wow fadeInUp" data-wow-delay="0.5s" src="img\safety_tips.jpg" style="max-width: 70%; height: auto;">
+            </div>
+        </div>
+</div>
+
+<!-- Reports start -->
+
         <div class="container-xxl py-5" id="feature">
             <div class="container py-5 px-lg-5">
                 <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                    <h1 class="mb-4 text-center text-primary-gradient">Requests</h1>
-                    <h4 class="mb-5">Request access from the warehouse manager to proceed to the questionnaire</h4>
+                    <h5 class="text-primary-gradient fw-medium">Reports</h5>
+                    <h1 class="mb-5">Explore Functionalities</h1>
                 </div>
-                <div class="container py-5">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Manager Name</th>
-                                <th>Warehouse Name</th>
-                                <th>Request Approval</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-    <?php foreach ($rows as $row): ?>
-    <tr>
-        <td><?= htmlspecialchars($row['manager_name']) ?></td>
-        <td><?= htmlspecialchars($row['warehouse_name']) ?></td>
-        <td>
-            <?php if ($row['reqStatus'] == 0): ?>
-                <!-- Request Button -->
-                <button 
-                    class="btn btn-primary-gradient py-1.5 px-2.5 rounded-pill mt-1.5 request-btn" 
-                    data-warehouse-id="<?= htmlspecialchars($row['warehouseID']) ?>" 
-                    data-warehouse-name="<?= htmlspecialchars($row['warehouse_name']) ?>" 
-                    data-engineer-name="<?= htmlspecialchars($_SESSION['engineer_name']) ?>">
-                    Request
-                </button>
-            <?php elseif ($row['reqStatus'] == 1): ?>
-                <!-- Pending Button -->
-                <button class="btn btn-warning py-1.5 px-2.5 rounded-pill mt-1.5" disabled>
-                    Pending
-                </button>
-            <?php elseif ($row['reqStatus'] == 2): 
-                $_SESSION['warehouse_id'] = htmlspecialchars($row['warehouseID']);
-                ?>
-                <!-- Accepted Button -->
-                <form method="POST" action="questionnaire.php" style="display:inline;">
-                <input type="hidden" name="warehouseID" value="<?= htmlspecialchars($row['warehouseID']) ?>">
-                <button type="submit" class="btn btn-success py-1.5 px-2.5 rounded-pill mt-1.5">
-                    Accepted
-                </button>
-            </form>
-            <?php elseif ($row['reqStatus'] == 3): ?>
-                <!-- Deleted Button -->
-                <button class="btn btn-danger py-1.5 px-2.5 rounded-pill mt-1.5" disabled>
-                    Deleted
-                </button>
-            <?php endif; ?>
-        </td>
-    </tr>
-    <?php endforeach; ?>
-</tbody>
-
-
-
-                    </table>
+                <div class="row g-4">
+                    <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="feature-item bg-light rounded p-4">
+                            <div class="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle mb-4" style="width: 60px; height: 60px;">
+                                <i class="fa fa-edit text-white fs-4"></i>
+                            </div>
+                            <h5 class="mb-3">Create New Report</h5>
+                            <p class="m-0">Quickly generate comprehensive safety engineering reports with ease and precision.</p>
+                            <a href="requestPage.php" class="btn btn-primary-gradient mt-3">Create New Report</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                        <div class="feature-item bg-light rounded p-4">
+                            <div class="d-inline-flex align-items-center justify-content-center bg-secondary-gradient rounded-circle mb-4" style="width: 60px; height: 60px;">
+                                <i class="fa fa-folder-open text-white fs-4"></i>
+                            </div>
+                            <h5 class="mb-3">View Old Reports</h5>
+                            <p class="m-0">Access and manage previously generated reports at any time, from anywhere.</p>
+                            <a href="viewOld.php" class="btn btn-secondary-gradient mt-3">View Old Reports</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <!-- Reports end -->
+
+        
+
         <!-- Footer Start -->
         <div class="container-fluid bg-primary text-light footer wow fadeIn" data-wow-delay="0.1s">
             <div class="container py-5 px-lg-5">
@@ -191,7 +173,9 @@ $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
                         <p><i class="fa fa-map-marker-alt me-3"></i>Koraytem</p>
                         <p><i class="fa fa-phone-alt me-3"></i>+961 79 133 173</p>
                         <p><i class="fa fa-envelope me-3"></i>serg@gmail.com</p>
+                       
                     </div>
+                    
                     <div class="col-md-6 col-lg-3">
                         <h4 class="text-white mb-4">Quick Links</h4>
                         <a class="btn btn-link" href="">Privacy Policy</a>
@@ -226,6 +210,10 @@ $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
         <!-- Footer End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-lg-square back-to-top pt-2"><i class="bi bi-arrow-up text-white"></i></a>
     </div>
 
     <!-- JavaScript Libraries -->
@@ -236,47 +224,9 @@ $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
     <script src="lib/waypoints/waypoints.min.js"></script>
     <script src="lib/counterup/counterup.min.js"></script>
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
     <script src="js/main.js"></script>
-    <script>
-document.querySelectorAll('.request-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        const warehouseId = this.getAttribute('data-warehouse-id');
-        const warehouseName = this.getAttribute('data-warehouse-name');
-        const engineerName = this.getAttribute('data-engineer-name');
-        const action = 'request';
-
-        // Perform AJAX request
-        fetch('sendRequest.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-                warehouseID: warehouseId,
-                warehouse_name: warehouseName,
-                engineer_name: engineerName,
-                action
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-
-                // Update "Request" button to "Pending"
-                this.textContent = "Pending";
-                this.classList.remove('btn-primary-gradient');
-                this.classList.add('btn-warning');
-                this.disabled = true;
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(error => {
-            alert("An error occurred. Please try again later.");
-            console.error(error);
-        });
-    });
-});
-</script>
-
 </body>
+
 </html>

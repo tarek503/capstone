@@ -1,6 +1,7 @@
 <?php
 require('fpdf186/fpdf.php');
 
+
 // Database connection and other logic
 $host = "127.0.0.1";
 $dbname = "fyp";
@@ -15,7 +16,7 @@ try {
 }
 
 // Fetch questions from the `Q` table
-$query = "SELECT * FROM Q ORDER BY Section";
+$query = "SELECT * FROM q ORDER BY Section";
 $stmt = $conn->prepare($query);
 $stmt->execute();
 $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -75,7 +76,10 @@ foreach ($questions as $q) {
 
 // Call the Python API
 $apiUrl = "http://127.0.0.1:5000/ask-gpt"; 
-$data = json_encode(["prompt" => "Write a very detailed safety report, including risk analysis according to the following questionnaire, write it as one connected paragraph with professional english:\n" . $reportString]);
+$data = json_encode(["prompt" => "Write a very detailed safety report, 
+including risk analysis according to the below questionnaire, write it as introduction, 
+separate paragraphs for each section, and a conslusion. Use 
+professional english, do not use symbols like * or others:\n" . $reportString]);
 
 $ch = curl_init($apiUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -101,9 +105,12 @@ class PDF extends FPDF
 {
     function Header()
     {
-        $this->SetFont('Arial', 'B', 14);
-        $this->Cell(0, 10, 'Generated Safety Report', 0, 1, 'C');
-        $this->Ln(10);
+        // Add "Generated Report" only on the first page
+        if ($this->PageNo() == 1) {
+            $this->SetFont('Arial', 'B', 14);
+            $this->Cell(0, 10, 'Generated Safety Report', 0, 1, 'C');
+            $this->Ln(10); // Add space below the header
+        }
     }
 
     function Footer()
@@ -114,12 +121,33 @@ class PDF extends FPDF
     }
 }
 
+$sanitizedText = preg_replace('/[^\w\s]/', '', $generatedReport); 
+
+// Create PDF
 $pdf = new PDF();
 $pdf->AddPage();
 $pdf->SetFont('Arial', '', 12);
-$pdf->MultiCell(0, 10, $generatedReport);
-$pdfFile = "Safety_Report_" . date('Ymd_His') . ".pdf"; // Generates a filename with date and time
-$pdf->Output($pdfFile, 'F');
+$pdf->MultiCell(0, 10, $sanitizedText); 
+$pdfFile = "Safety_Report_" . date('Ymd_His') . ".pdf"; 
+$pdf->Output($pdfFile, 'F'); 
+
+
+$reportId = $report['ReportID']; 
+$pdfData = file_get_contents($pdfFile);
+
+// Update the database with the PDF file
+try {
+    $updateQuery = "UPDATE reports SET pdf_file = :pdf_file WHERE ReportID = :report_id";
+    $stmt = $conn->prepare($updateQuery);
+    $stmt->bindParam(':pdf_file', $pdfData, PDO::PARAM_LOB);
+    $stmt->bindParam(':report_id', $reportId);
+    $stmt->execute();
+
+    echo "PDF successfully saved to the database for Report ID: $reportId.";
+} catch (PDOException $e) {
+    echo "Error saving PDF to database: " . $e->getMessage();
+}
+
 
 // Return the PDF as a downloadable file
 header('Content-Type: application/pdf');
@@ -130,3 +158,4 @@ readfile($pdfFile);
 // Delete the temporary PDF file
 unlink($pdfFile);
 ?>
+    

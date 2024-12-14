@@ -7,6 +7,66 @@ if (!isset($_SESSION['manager_name'])) {
     header("Location: index.html"); // Redirect to the login page if not logged in
     exit();
 }
+
+// Database connection
+$servername = "127.0.0.1";  
+$username = "root"; 
+$password = ""; 
+$dbname = "fyp"; 
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Query to fetch requests
+$query = "SELECT 
+            requests.id AS requestID,
+            requests.engineer_name,
+            warehouses.warehouse_name,
+            requests.reqStatus
+          FROM requests
+          INNER JOIN warehouses ON requests.warehouseID = warehouses.id
+          WHERE requests.reqStatus = 1";
+
+$stmt = $conn->prepare($query);
+$stmt->execute();
+$result = $stmt->get_result();
+$requests = [];
+
+if ($result) {
+    $requests = $result->fetch_all(MYSQLI_ASSOC);
+}
+
+$stmt->close();
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $requestID = $_POST['requestID'] ?? null;
+    $action = $_POST['action'] ?? null;
+
+    if ($requestID && in_array($action, ['accept', 'decline'])) {
+        $newStatus = $action === 'accept' ? 2 : 3;
+
+        // Update the database status
+        $stmt = $conn->prepare("UPDATE requests SET reqStatus = ? WHERE id = ?");
+        $stmt->bind_param("ii", $newStatus, $requestID);
+        $stmt->execute();
+
+        // Return JSON response for success
+        header('Content-Type: application/json');
+        if ($stmt->affected_rows > 0) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'No rows affected']);
+        }
+        exit();
+    }
+    echo json_encode(['success' => false, 'message' => 'Invalid request']);
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -308,7 +368,81 @@ if (!isset($_SESSION['manager_name'])) {
 </div>
 
         <!-- Reports end -->
-         
+<!-- Requests Section -->
+<div class="container-xxl py-5" id="feature">
+    <div class="container py-5 px-lg-5">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h1 class="mb-4 text-center text-primary-gradient">Requests</h1>
+            <h4 class="mb-5">Request access from the warehouse manager to proceed to the questionnaire</h4>
+        </div>
+        <div class="container py-5">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Engineer Name</th>
+                        <th>Warehouse Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($requests as $request): ?>
+                        <tr id="request-row-<?= htmlspecialchars($request['requestID']) ?>">
+                            <td><?= htmlspecialchars($request['engineer_name']) ?></td>
+                            <td><?= htmlspecialchars($request['warehouse_name']) ?></td>
+                            <td>
+                                <button 
+                                    class="btn btn-primary-gradient py-1.5 px-2.5 rounded-pill mt-1.5" 
+                                    onclick="handleRequest(<?= htmlspecialchars($request['requestID']) ?>, 'accept')">
+                                    Accept
+                                </button>
+                                <button 
+                                class="btn btn-primary-gradient py-1.5 px-2.5 rounded-pill mt-1.5" 
+                                    onclick="handleRequest(<?= htmlspecialchars($request['requestID']) ?>, 'decline')">
+                                    Decline
+                                </button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function handleRequest(requestId, action) {
+        // Make an AJAX request to handle the action
+        fetch("", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `requestID=${requestId}&action=${action}`,
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                // Show an alert based on action
+                alert(action === 'accept' ? 'Request Accepted' : 'Request Declined');
+                // Remove the row from the table
+                const row = document.getElementById(`request-row-${requestId}`);
+                if (row) {
+                    row.remove();
+                }
+            } else {
+                alert('Failed to process request. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    }
+</script>
+
+
+
+
         <!-- Footer Start -->
         <div class="container-fluid bg-primary text-light footer wow fadeIn" data-wow-delay="0.1s">
             <div class="container py-5 px-lg-5">
