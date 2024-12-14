@@ -1,7 +1,7 @@
 <?php
 session_start();
 if(!isset($_SESSION['engineer_name'])) {
-    header('index.html');
+    header('Location: index.html');
     exit();
 }
 // Database connection

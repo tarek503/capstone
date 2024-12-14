@@ -2,10 +2,20 @@
 <?php
 session_start(); // Start the session to retrieve the logged-in user's data
 
+$ename = "";
+$access = "";
 // Check if the manager is logged in
-if (!isset($_SESSION['engineer_name'])) {
-    header("Location: index.html"); // Redirect to the login page if not logged in
-    exit();
+if (isset($_SESSION['engineer_name'])) {
+    $ename = $_SESSION['engineer_name'];
+    $access = "engineer";
+}
+elseif (isset($_GET['name'])) {
+    $ename = $_GET['name'];
+    $access = "admin";
+}
+else {
+    header("Location: index.html");
+    exit(); 
 }
 ?>
 <!DOCTYPE html>
@@ -74,9 +84,8 @@ if (!isset($_SESSION['engineer_name'])) {
                 <div class="container px-lg-5">
                     <div class="row g-5">
                         <div class="col-lg-8 text-center text-lg-start">
-                            <h1 class="text-white mb-4 animated slideInDown">Managing Your Warehouse Information</h1>
-                            <p class="text-white pb-3 animated slideInDown">Manage warehouse data and assist engineers in generating safety reports for your warehouse.</p>
-                            <a href="#feature" class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill me-3 animated slideInLeft">Proceed to Manage Your Info</a>
+                            <h1 class="text-white mb-4 animated slideInDown">Viewing old reports as an <?php echo $access ?></h1>
+                            <a href="#feature" class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill me-3 animated slideInLeft">Proceed to the reports</a>
                         </div>
                         <div class="col-lg-4 d-flex justify-content-center justify-content-lg-end wow fadeInUp" data-wow-delay="0.3s">
                             <div class="owl-carousel screenshot-carousel">
@@ -96,8 +105,8 @@ if (!isset($_SESSION['engineer_name'])) {
 <div class="container-xxl py-5" id="feature">
             <div class="container py-5 px-lg-5">
                 <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                    <h5 class="text-primary-gradient fw-medium">View Old Reports By <?php echo $_SESSION['engineer_name'] ?></h5>
-                    <h1 class="mb-5">Warehouse Information</h1>
+                    <h5 class="text-primary-gradient fw-medium">View Old Reports By <?php echo $ename ?></h5>
+                    <h1 class="mb-5">Reports</h1>
                 </div>
                 <?php
                 // Database connection
@@ -106,7 +115,7 @@ if (!isset($_SESSION['engineer_name'])) {
                 $password = ""; // Replace with your database password
                 $dbname = "fyp"; // Replace with your database name
 
-                $engineer_name = $_SESSION['engineer_name'];
+                $engineer_name = $ename;
 
                 // Create connection
                 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -139,10 +148,11 @@ if (!isset($_SESSION['engineer_name'])) {
                                 echo '<td>' . htmlspecialchars($row['WarehouseName']) . '</td>';
                                 echo '<td>';
                                 if (!empty($row['pdf_file'])) {
-                                    $fileName = "Safety_Report_" . uniqid() . ".pdf"; 
+                                    $fileName = "reports/Safety_Report_" . uniqid() . ".pdf";
+                                    $relativePath = 'reports/' . basename($fileName);
                                     file_put_contents($fileName, $row['pdf_file']);
-                                    echo '<a href="' . $fileName . '" target="_blank" class="btn btn-primary-gradient py-2 px-4 rounded-pill">View</a> ';
-                                    echo '<a href="' . $fileName . '" download class="btn btn-secondary-gradient py-2 px-4 rounded-pill">Download</a>';
+                                    echo '<a href="' . $relativePath . '" target="_blank" class="btn btn-primary-gradient py-2 px-4 rounded-pill">View</a> ';
+                                    echo '<a href="' . $relativePath . '" download class="btn btn-secondary-gradient py-2 px-4 rounded-pill">Download</a>';
                                 } else {
                                     echo '<span class="text-muted">No PDF available</span>';
                                 }

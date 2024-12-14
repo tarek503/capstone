@@ -47,7 +47,7 @@ $user = $stmt->fetch(PDO::FETCH_OBJ);
 if ($user) {
     session_start();
     if($email == "admin@admin.com") {
-        header("location: admin.html");
+        header("location: admin.php");
     }
     else if ($user->is_engineer == 0) { 
         $_SESSION['engineer_name'] = $user->name;
