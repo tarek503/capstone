@@ -136,7 +136,6 @@ else {
                             echo '<table class="table table-bordered text-center">';
                             echo '<thead>';
                             echo '<tr>';
-                            echo '<th>Engineer Name</th>';
                             echo '<th>Warehouse Name</th>';
                             echo '<th>Report</th>';
                             echo '</tr>';
@@ -144,15 +143,14 @@ else {
                             echo '<tbody>';
                             while ($row = $result->fetch_assoc()) {
                                 echo '<tr>';
-                                echo '<td>' . htmlspecialchars($row['EngineerUsername']) . '</td>';
                                 echo '<td>' . htmlspecialchars($row['WarehouseName']) . '</td>';
                                 echo '<td>';
                                 if (!empty($row['pdf_file'])) {
-                                    $fileName = "reports/Safety_Report_" . uniqid() . ".pdf";
-                                    $relativePath = 'reports/' . basename($fileName);
-                                    file_put_contents($fileName, $row['pdf_file']);
-                                    echo '<a href="' . $relativePath . '" target="_blank" class="btn btn-primary-gradient py-2 px-4 rounded-pill">View</a> ';
-                                    echo '<a href="' . $relativePath . '" download class="btn btn-secondary-gradient py-2 px-4 rounded-pill">Download</a>';
+                                    echo '<form action="retrievePDF.php" method="POST" style="display:inline;">';
+                                    echo '<input type="hidden" name="pdf_file" value="' . htmlspecialchars($row['pdf_file']) . '">';
+                                    echo '<input type="hidden" name="warehouse_name" value="' . htmlspecialchars($row['WarehouseName']) . '">';
+                                    echo '<button type="submit" class="btn btn-secondary-gradient py-2 px-4 rounded-pill">Download</button>';
+                                    echo '</form>';
                                 } else {
                                     echo '<span class="text-muted">No PDF available</span>';
                                 }

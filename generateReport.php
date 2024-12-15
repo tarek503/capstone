@@ -74,7 +74,6 @@ foreach ($questions as $q) {
     }
 }
 
-// Call the Python API
 $apiUrl = "http://127.0.0.1:5000/ask-gpt"; 
 $data = json_encode(["prompt" => "Write a very detailed safety report, 
 including risk analysis according to the below questionnaire, write it as introduction, 
@@ -84,7 +83,7 @@ professional english, do not use symbols like * or others:\n" . $reportString]);
 $ch = curl_init($apiUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);   
 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
 $response = curl_exec($ch);
@@ -132,20 +131,36 @@ $pdfFile = "Safety_Report_" . date('Ymd_His') . ".pdf";
 $pdf->Output($pdfFile, 'F'); 
 
 
-$reportId = $report['ReportID']; 
-$pdfData = file_get_contents($pdfFile);
+$reportId = $report['ReportID'];
 
-// Update the database with the PDF file
-try {
-    $updateQuery = "UPDATE reports SET pdf_file = :pdf_file WHERE ReportID = :report_id";
-    $stmt = $conn->prepare($updateQuery);
-    $stmt->bindParam(':pdf_file', $pdfData, PDO::PARAM_LOB);
-    $stmt->bindParam(':report_id', $reportId);
-    $stmt->execute();
+$pythonPath = 'C:\\Users\\gega\\AppData\\Local\\Programs\\Python\\Python313\\python.exe';
+$uploadScriptPath = 'C:\\wamp64\\www\\capstone\\upload.py';
 
-    echo "PDF successfully saved to the database for Report ID: $reportId.";
-} catch (PDOException $e) {
-    echo "Error saving PDF to database: " . $e->getMessage();
+$output = [];
+$returnVar = null;
+
+// Execute the Python upload script
+exec("$pythonPath $uploadScriptPath $pdfFile 2>&1", $output, $returnVar);
+
+if ($returnVar !== 0) {
+    echo "Error during upload: " . implode("\n", $output);
+} else {
+    echo "PDF successfully uploaded to S3 bucket.\n";
+    echo implode("\n", $output);
+
+    // Update the database with the file path of the uploaded PDF
+    try {
+        $filePath = "s3://myawss3bucketreports/reports/" . basename($pdfFile); 
+        $updateQuery = "UPDATE reports SET pdf_file = :pdf_file WHERE ReportID = :report_id";
+        $stmt = $conn->prepare($updateQuery);
+        $stmt->bindParam(':pdf_file', $filePath);
+        $stmt->bindParam(':report_id', $report['ReportID']);
+        $stmt->execute();
+
+        echo "Database successfully updated with file path: $filePath\n";
+    } catch (PDOException $e) {
+        echo "Error updating database with file path: " . $e->getMessage();
+    }
 }
 
 
