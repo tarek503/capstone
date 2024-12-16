@@ -6,7 +6,7 @@ from botocore.exceptions import NoCredentialsError
 BUCKET_NAME = 'myawss3bucketreports'
 REGION_NAME = 'eu-north-1'
 AWS_ACCESS_KEY = 'AKIA2OAJT3BMA6OB26WW'
-AWS_SECRET_KEY = '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'
+AWS_SECRET_KEY = 'masked'
 
 def upload_to_s3(file_path, bucket_name, s3_key):
     try:
