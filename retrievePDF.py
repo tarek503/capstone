@@ -10,7 +10,7 @@ s3_client = boto3.client(
     's3',
     region_name=REGION_NAME,
     aws_access_key_id='AKIA2OAJT3BMA6OB26WW',
-    aws_secret_access_key='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'
+    aws_secret_access_key='masked'
 )
 
 def download_pdf_from_s3(pdf_file_path, warehouse_name):
