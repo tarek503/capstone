@@ -19,7 +19,7 @@ def download_pdf_from_s3(pdf_file_path, warehouse_name):
     pdf_key = pdf_file_path.split(f"s3://{BUCKET_NAME}/")[-1]
 
     # Temporary directory
-    temp_dir = os.path.join(os.getcwd(), "temp")  # Create a "temp" folder in the current working directory
+    temp_dir = os.path.join(os.getcwd(), "temp") 
 
     # Ensure the temp directory exists
     if not os.path.exists(temp_dir):

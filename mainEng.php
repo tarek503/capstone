@@ -177,31 +177,184 @@ if(!isset($_SESSION['engineer_name'])) {
                     </div>
                     
                     <div class="col-md-6 col-lg-3">
-                        <h4 class="text-white mb-4">Quick Links</h4>
-                        <a class="btn btn-link" href="">Privacy Policy</a>
-                        <a class="btn btn-link" href="">Terms & Conditions</a>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <h4 class="text-white mb-4">Newsletter</h4>
-                        <p>To get our news periodically, enter your email.</p>
-                        <div class="position-relative w-100 mt-3">
-                            <input class="form-control border-0 rounded-pill w-100 ps-4 pe-5" type="text" placeholder="Your Email" style="height: 48px;">
-                            <button type="button" class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2"><i class="fa fa-paper-plane text-primary-gradient fs-4"></i></button>
-                        </div>
-                    </div>
+    <h4 class="text-white mb-4">Quick Links</h4>
+    <button class="btn btn-link" onclick="openDialog('privacyPolicyDialog')">Privacy Policy</button>
+    <button class="btn btn-link" onclick="openDialog('termsConditionsDialog')">Terms & Conditions</button>
+
+    <!-- Privacy Policy Dialog -->
+    <div id="privacyPolicyDialog" class="dialog" style="display: none;">
+        <div class="dialog-content">
+            <span class="close" onclick="closeDialog('privacyPolicyDialog')">&times;</span>
+            <h4>Privacy Policy</h4>
+            <div class="dialog-text">
+                <p>Privacy Policy for SERG (Safety Engineering Report Generator)</p>
+
+                <p>Effective Date: 16/12/2024</p>
+
+                <p>SERG (Safety Engineering Report Generator) is committed to protecting the privacy of its users. This Privacy Policy outlines how we collect, use, store, and protect your personal and non-personal data when you access or use our website and services.</p>
+
+                <p>1. Information We Collect</p>
+
+                <p>1.1 Personal Information:<br>When you register or use our services, we may collect personal information such as your name, email address, and contact details.</p>
+
+                <p>1.2 Usage Data:<br>We automatically collect information about your interactions with our website, including your IP address, browser type, operating system, and the pages you visit.</p>
+
+                <p>1.3 Report Data:<br>Data submitted through the questionnaire, including responses and generated reports, is processed to provide the service and stored securely.</p>
+
+                <p>1.4 Cookies and Tracking Technologies:<br>We use cookies and similar technologies to enhance your user experience and analyze website performance. You can manage your cookie preferences through your browser settings.</p>
+
+                <p>2. How We Use Your Information</p>
+
+                <p>2.1 To Provide and Improve Services:<br>We use your information to generate safety engineering reports, process requests, and enhance the functionality of our platform.</p>
+
+                <p>2.2 Communication:<br>We may contact you via email or notifications to provide updates, respond to inquiries, and share important information about our services.</p>
+
+                <p>2.3 Compliance and Security:<br>Your information may be used to comply with legal obligations, prevent fraudulent activities, and ensure the security of our platform.</p>
+
+                <p>3. How We Store and Protect Your Data</p>
+
+                <p>3.1 Data Storage:<br>Personal information and report data are stored securely in our databases. Generated reports are saved in an S3 bucket, and their file paths are stored in our database for retrieval.</p>
+
+                <p>3.2 Security Measures:<br>We implement industry-standard security practices, including encryption, access controls, and regular audits, to protect your data from unauthorized access, alteration, or disclosure.</p>
+
+                <p>3.3 Data Retention:<br>We retain your data only for as long as necessary to provide our services and comply with legal obligations. You may request the deletion of your data at any time by contacting us.</p>
+
+                <p>4. Sharing Your Information</p>
+
+                <p>4.1 Third-Party Services:<br>We may share data with third-party providers, such as the GPT API, to process and generate reports. These providers are obligated to protect your data in accordance with their privacy policies.</p>
+
+                <p>4.2 Legal Requirements:<br>We may disclose your information if required to do so by law or in response to valid requests by public authorities.</p>
+
+                <p>4.3 Business Transfers:<br>In the event of a merger, acquisition, or sale of assets, your data may be transferred to the new owner, subject to the terms of this Privacy Policy.</p>
+
+                <p>5. Your Rights and Choices</p>
+
+                <p>5.1 Access and Correction:<br>You have the right to access and correct your personal information stored with us.</p>
+
+                <p>5.2 Data Portability:<br>You may request a copy of your data in a commonly used format.</p>
+
+                <p>5.3 Deletion:<br>You can request the deletion of your personal data, and we will process your request unless we are legally required to retain it.</p>
+
+                <p>5.4 Opt-Out:<br>You can opt-out of non-essential communications or data collection by contacting us.</p>
+
+                <p>6. Third-Party Links<br>Our website may contain links to third-party websites. We are not responsible for the privacy practices of these external sites. We encourage you to review their privacy policies.</p>
+
+                <p>7. Changes to This Privacy Policy<br>We may update this Privacy Policy periodically to reflect changes in our practices or legal requirements. We will notify you of significant changes via email or website updates.</p>
+
+                <p>By using the SERG website and services, you agree to the terms of this Privacy Policy.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms & Conditions Dialog -->
+    <div id="termsConditionsDialog" class="dialog" style="display: none;">
+        <div class="dialog-content">
+            <span class="close" onclick="closeDialog('termsConditionsDialog')">&times;</span>
+            <h4>Terms & Conditions</h4>
+            <div class="dialog-text">
+                <p>Terms and Conditions for SERG (Safety Engineering Report Generator)
+
+Effective Date: 16/12/2024
+
+Welcome to SERG! By accessing or using our website and services, you agree to comply with and be bound by the following terms and conditions. Please read them carefully before using our platform.
+
+<p>1 <strong>Acceptance of Terms</strong></p>
+<p>By using SERG, you confirm that you have read, understood, and agree to these Terms and Conditions. If you do not agree, you must not use our services.</p>
+
+<p>2. <strong>Use of Services</strong></p>
+<p>2.1 SERG provides tools for generating safety engineering reports based on user-submitted data. You agree to use these services only for lawful purposes.</p>
+<p>2.2 You are responsible for ensuring the accuracy and completeness of the data you provide.</p>
+<p>3. <strong>User Accounts</strong></p>
+<p>3.1 To access certain features, you may need to create an account. You are responsible for maintaining the confidentiality of your login credentials.</p>
+<p>3.2 You must notify us immediately of any unauthorized use of your account or security breaches.</p>
+<p>4. <strong>Intellectual Property</strong></p>
+<p>4.1 All content on the SERG platform, including text, graphics, and software, is the property of SERG or its licensors and is protected by copyright and intellectual property laws.</p>
+<p>4.2 You may not reproduce, distribute, or modify any part of the platform without prior written consent.</p>
+<p>5. <strong>Data Usage and Privacy</strong></p>
+<p>5.1 By using SERG, you consent to the collection and use of your data as outlined in our Privacy Policy.</p>
+<p>5.2 You retain ownership of the data you submit but grant SERG a license to process and store this data to provide services.</p>
+<p>6. <strong>Limitation of Liability</strong></p>
+<p>6.1 SERG is provided on an "as-is" basis. We make no guarantees regarding the accuracy, reliability, or availability of the platform.</p>
+<p>6.2 To the fullest extent permitted by law, SERG shall not be liable for any indirect, incidental, or consequential damages arising from the use of our services.</p>
+<p>7. <strong>Termination</strong></p>
+<p>We reserve the right to terminate or suspend your access to the platform at our sole discretion, without prior notice, for conduct that violates these terms.</p>
+<p>8. <strong>Changes to Terms</strong></p>
+<p>We may update these Terms and Conditions from time to time. Significant changes will be communicated via email or through updates on the platform.</p>
+<p>9. <strong>Governing Law</strong></p>
+<p>These terms are governed by the laws of [Insert Jurisdiction]. Any disputes arising from these terms will be subject to the exclusive jurisdiction of the courts in [Insert Jurisdiction].</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDialog(dialogId) {
+        document.getElementById(dialogId).style.display = 'block';
+    }
+
+    function closeDialog(dialogId) {
+        document.getElementById(dialogId).style.display = 'none';
+    }
+</script>
+
+<style>
+    .dialog {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        padding: 20px;
+        width: 80%;
+        max-width: 500px;
+    }
+
+    .dialog-content {
+        text-align: left;
+    }
+
+    .dialog-text {
+        color: black;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        font-size: 20px;
+        color: #333;
+    }
+
+    .dialog-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+</style>
+
+
                 </div>
             </div>
             <div class="container px-lg-5">
                 <div class="copyright">
-                    <div class="row">
+                    <div class="row">   
                         <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
                             &copy; <a class="border-bottom" href="#">SERG</a>, All Right Reserved. 
                         </div>
                         <div class="col-md-6 text-center text-md-end">
                             <div class="footer-menu">
                                 <a href="">Home</a>
-                                <a href="">Cookies</a>
-                                <a href="">Help</a>
                                 <a href="">FAQs</a>
                             </div>
                         </div>
