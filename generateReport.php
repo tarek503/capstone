@@ -77,7 +77,7 @@ foreach ($questions as $q) {
 $apiUrl = "http://127.0.0.1:5000/ask-gpt"; 
 $data = json_encode(["prompt" => "Write a very detailed safety report, 
 including risk analysis according to the below questionnaire, write it as introduction, 
-separate paragraphs for each section, and a conslusion. Use 
+separate paragraphs for each section, and a conclusion. Use 
 professional english, do not use symbols like * or others:\n" . $reportString]);
 
 $ch = curl_init($apiUrl);
